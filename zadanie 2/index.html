@@ -1,0 +1,96 @@
+<!--<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <style type="text/css" media="screen">
+  div {
+    width:60px;
+    height: 60px;
+    float: left;
+    margin: 1px;
+  }
+  </style>
+</head>
+<body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://d3js.org/d3.v3.js"></script>
+
+  <script type="text/javascript">
+
+  var body = d3.select("body"),
+    length = 200,
+    color = d3.scale.linear().domain([1,length])
+      .interpolate(d3.interpolateHcl)
+      .range([d3.rgb("#5599ff"), d3.rgb('#16fc62')]);
+
+
+  for (var i = 0; i < length; i++) {
+    body.append('div').attr('style', function (d) {
+      return 'background-color: ' + color(i);
+    });
+  }
+  </script>
+
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        div.c {
+            display: inline-block;
+            height: 30px;
+            margin-bottom: -4px;
+            width: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        const a = "e6b3ff";
+        const b = "ffff00";
+
+        const a_dec = parseInt(a, 16);
+        const b_dec = parseInt(b, 16);
+
+        const x = 250;
+
+        const r_difference = (parseInt(b.substr(0,2), 16) - parseInt(a.substr(0,2), 16)) / x;
+        const g_difference = (parseInt(b.substr(2,2), 16) - parseInt(a.substr(2,2), 16)) / x;
+        const b_difference = (parseInt(b.substr(4,2), 16) - parseInt(a.substr(4,2), 16)) / x;
+
+console.log(a.substr(0,2), a.substr(2,2), a.substr(4,2))
+        let current_r = parseInt(a.substr(0,2), 16);
+        let current_g = parseInt(a.substr(2,2), 16);
+        let current_b = parseInt(a.substr(4,2), 16);
+
+        let content = `<div class="c" style="background: #${a};"></div>`;
+
+        for (let i = 1; i <= x; i++) {
+            current_r += r_difference;
+            current_g += g_difference;
+            current_b += b_difference;
+            const rr = Math.round(current_r).toString(16);
+            const gg = Math.round(current_g).toString(16);
+            const bb = Math.round(current_b).toString(16);
+            const hexColor = `${rr}${gg}${bb}`;
+            console.log(hexColor);
+            content += `<div class="c" style="background: #${hexColor};"></div>`;
+        }
+        document.getElementById("container").innerHTML = content;
+    </script>
+</body>
+</html>
