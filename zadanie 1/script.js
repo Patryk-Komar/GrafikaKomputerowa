@@ -48,7 +48,8 @@ let movingObjectIndex = -1;
 
 let resizingObjectIndex = -1;
 let resizingLinePoint = "";
-let resizingRectanglePoint = "";
+
+let changingObjectIndex = -1;
 
 $(() => {
 
@@ -61,6 +62,8 @@ $(() => {
 
     width = context.canvas.width;
     height = context.canvas.height;
+
+    refreshForms();
     
     $("#canvas").mousedown((event) => {
         const x = event.pageX - posX;
@@ -71,6 +74,7 @@ $(() => {
         } else if (activeTool === "moving") {
             if (activeFigure === "line") {
                 for (let i = 0; i < lines.length; i++) {
+                    console.log(lines[i]);
                     const line = lines[i];
                     const {
                         A: lineA,
@@ -186,6 +190,69 @@ $(() => {
                     }
                 }
             }
+        } else if (activeTool === "changing") {
+            if (activeFigure === "line") {
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const {
+                        A: lineA,
+                        B: lineB
+                    } = line;
+                    const a = (lineA.y - lineB.y) / (lineA.x - lineB.x);
+                    const b = lineA.y - (((lineA.y - lineB.y) / (lineA.x - lineB.x)) * lineA.x);
+                    if ((Math.abs(A.x - line.A.x) <= 5 && Math.abs(A.y - line.A.y) <= 5) || (Math.abs(A.x - line.B.x) <= 5 && Math.abs(A.y - line.B.y) <= 5)) {
+                        changingObjectIndex = i;
+                    }
+                    if ((Math.abs(a * A.x - A.y + b) / Math.sqrt(Math.pow(a, 2) + Math.pow(-1, 2))) <= 5) {
+                        if (lineA.x < lineB.x) {
+                            if (lineA.y < lineB.y) {
+                                if (A.x > lineA.x -5 && A.x < lineB.x + 5 && A.y > lineA.y -5 && A.y < lineB.y + 5) {
+                                    changingObjectIndex = i;
+                                }
+                            } else {
+                                if (A.x > lineA.x -5 && A.x < lineB.x + 5 && A.y > lineB.y - 5 && A.y < lineA.y + 5) {
+                                    changingObjectIndex = i;
+                                }
+                            }
+                        } else {
+                            if (lineA.y < lineB.y) {
+                                if (A.x > lineB.x -5 && A.x < lineA.x + 5 && A.y > lineA.y - 5 && A.y < lineB.y + 5) {
+                                    changingObjectIndex = i;
+                                }
+                            } else {
+                                if (A.x > lineB.x -5 && A.x < lineA.x + 5 && A.y > lineB.y -5 && A.y < lineA.y + 5) {
+                                    changingObjectIndex = i;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (activeFigure === "rectangle") {
+                for (let i = 0; i < rectangles.length; i++) {
+                    const rectangle = rectangles[i];
+                    const {
+                        A: rectA,
+                        B: rectB
+                    } = rectangle;
+                    if ((Math.abs(A.x - rectA.x) <= 5 && Math.abs(A.y - rectA.y) <= 5) || (Math.abs(A.x - rectA.x) <= 5 && Math.abs(A.y - rectB.y) <= 5) || (Math.abs(A.x - rectB.x) <= 5 && Math.abs(A.y - rectA.y) <= 5) || (Math.abs(A.x - rectB.x) <= 5 && Math.abs(A.y - rectB.y) <= 5)) {
+                        changingObjectIndex = i;
+                    }
+                    if ((A.x >= rectA.x - 5 && A.x <= rectB.x + 5 && Math.abs(A.y - rectA.y) <=5) ||
+                    (A.x >= rectA.x - 5 && A.x <= rectB.x + 5 && Math.abs(A.y - rectB.y) <=5) ||
+                    (A.y >= rectA.y - 5 && A.y <= rectB.y + 5 && Math.abs(A.x - rectA.x) <=5) ||
+                    (A.y >= rectA.y - 5 && A.y <= rectB.y + 5 && Math.abs(A.x - rectB.x) <=5)) {
+                        changingObjectIndex = i;
+                    }
+                }
+            } else if (activeFigure === "circle") {
+                for (let i = 0; i < circles.length; i++) {
+                    const circle = circles[i];
+                    if (Math.abs((Math.sqrt(Math.pow(A.x - circle.O.x, 2) + Math.pow(A.y - circle.O.y, 2))) - circle.radius) <= 5) {
+                        changingObjectIndex = i;
+                    }
+                }
+            }
+            updateChangingObject();
         }
     });
     
@@ -261,6 +328,7 @@ $(() => {
             }
         }
         movingObjectIndex = -1;
+        resizingObjectIndex = -1;
     });
 
     $("#canvas").mousemove((event) => {
@@ -367,11 +435,18 @@ $(() => {
             value: toYValue
         } = toY;
         if (fromXValue > 0 && fromXValue < width && fromYValue > 0 && fromYValue < height && toXValue > 0 && toXValue < width && toYValue > 0 && toYValue < height) {
-            A = new Point(fromXValue, fromYValue);
-            B = new Point(toXValue, toYValue);
-            const line = new Line(A, B);
-            lines.push(line);
-            drawLine(line);
+            A = new Point(parseInt(fromXValue), parseInt(fromYValue));
+            B = new Point(parseInt(toXValue), parseInt(toYValue));
+            if (activeTool !== "changing") {
+                const line = new Line(A, B);
+                lines.push(line);
+                drawLine(line);
+            } else if (activeFigure === "line") {
+                lines[changingObjectIndex] = new Line(A, B);
+                console.log(A, B);
+                refreshCanvas();
+                refreshForms();
+            }
         }
     });
 
@@ -403,19 +478,26 @@ $(() => {
         if (x > 0 && x < width && y > 0 && y < height && parseInt(x) + parseInt(rectWidth) < height && parseInt(y) + parseInt(rectHeight) < height) {
             A = new Point(x, y);
             B = new Point(parseInt(x) + parseInt(rectWidth), parseInt(y) + parseInt(rectHeight));
-            context.moveTo(A.x, A.y);
-            context.lineTo(B.x, A.y);
-            context.stroke();
-            context.moveTo(B.x, A.y);
-            context.lineTo(B.x, B.y);
-            context.stroke();
-            context.moveTo(B.x, B.y);
-            context.lineTo(A.x, B.y);
-            context.stroke();
-            context.moveTo(A.x, B.y);
-            context.lineTo(A.x, A.y);
-            context.stroke();
-            rectangles.push(new Rectangle(new Point(Math.min(A.x, B.x), Math.min(A.y, B.y)), new Point(Math.max(A.x, B.x), Math.max(A.y, B.y))));
+            if (activeTool !== "changing") {
+                context.moveTo(A.x, A.y);
+                context.lineTo(B.x, A.y);
+                context.stroke();
+                context.moveTo(B.x, A.y);
+                context.lineTo(B.x, B.y);
+                context.stroke();
+                context.moveTo(B.x, B.y);
+                context.lineTo(A.x, B.y);
+                context.stroke();
+                context.moveTo(A.x, B.y);
+                context.lineTo(A.x, A.y);
+                context.stroke();
+                rectangles.push(new Rectangle(new Point(Math.min(A.x, B.x), Math.min(A.y, B.y)), new Point(Math.max(A.x, B.x), Math.max(A.y, B.y))));
+            } else if (activeFigure === "rectangle") {
+                rectangles[changingObjectIndex] = new Rectangle(new Point(Math.min(A.x, B.x), Math.min(A.y, B.y)), new Point(Math.max(A.x, B.x), Math.max(A.y, B.y)));
+                refreshCanvas();
+                refreshForms();
+                changingObjectIndex = -1;
+            }
         }
     });
 
@@ -438,10 +520,17 @@ $(() => {
         const {
             value: radius
         } = circleRadius;
-        const O = new Point(x, y);
-        const circle = new Circle(O, radius);
-        circles.push(circle);
-        drawCircle(circle);
+        const O = new Point(parseInt(x), parseInt(y));
+        const circle = new Circle(O, parseInt(radius));
+        if (activeTool !== "changing") {
+            circles.push(circle);
+            drawCircle(circle);
+        } else if (activeFigure === "circle") {
+            circles[changingObjectIndex] = circle;
+            refreshCanvas();
+            refreshForms();
+            changingObjectIndex = -1;
+        }
     });
 
     $("button.clear").click(clearCanvas);
@@ -501,6 +590,35 @@ const changeActiveFigure = figure => {
     }
 };
 
+const updateChangingObject = () => {
+    if (activeTool === "changing" && changingObjectIndex !== -1) {
+        switch (activeFigure) {
+            case "line":
+                const line = lines[changingObjectIndex];
+                $("#line-from-x").val(line.A.x);
+                $("#line-from-y").val(line.A.y);
+                $("#line-to-x").val(line.B.x);
+                $("#line-to-y").val(line.B.y);
+                break;
+            case "rectangle":
+                const rectangle = rectangles[changingObjectIndex];
+                $("#rectangle-x").val(rectangle.A.x);
+                $("#rectangle-y").val(rectangle.A.y);
+                $("#rectangle-width").val(Math.abs(rectangle.A.x - rectangle.B.x));
+                $("#rectangle-height").val(Math.abs(rectangle.A.y - rectangle.B.y));
+                break;
+            case "circle":
+                const circle = circles[changingObjectIndex];
+                $("#circle-x").val(circle.O.x);
+                $("#circle-y").val(circle.O.y);
+                $("#circle-radius").val(circle.radius);
+                break;
+            default:
+                break;
+        }
+    }
+};
+
 const clearCanvas = () => {
     context.clearRect(0, 0, width, height);
     lines = [];
@@ -519,6 +637,20 @@ const refreshCanvas = () => {
     for (let circle of circles) {
         drawCircle(circle);
     }
+};
+
+const refreshForms = () => {
+    $("#line-from-x").val(0);
+    $("#line-from-y").val(0);
+    $("#line-to-x").val(0);
+    $("#line-to-y").val(0);
+    $("#rectangle-x").val(0);
+    $("#rectangle-y").val(0);
+    $("#rectangle-width").val(0);
+    $("#rectangle-height").val(0);
+    $("#circle-x").val(0);
+    $("#circle-y").val(0);
+    $("#circle-radius").val(0);
 };
 
 $("body").mouseup(() => {
