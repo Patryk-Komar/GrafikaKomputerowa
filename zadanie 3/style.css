@@ -34,7 +34,10 @@ div#color-picking {
     justify-content: center;
 }
 
-div#color-picking div {
+div#color-picking div.picking-section {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
     margin: 30px;
 }
 
@@ -48,7 +51,26 @@ div#rgb-color-text, div#rgb-color-numbers, div#cmyk-color {
     border: 2px solid white;
     border-radius: 50%;
     display: inline-block;
-    height: 100px;
+    height: 150px;
+    margin: 20px;
     transition: all .25s ease-in-out;
+    width: 150px;
+}
+
+input[type="text"] {
     width: 100px;
+}
+
+button {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    color: white;
+    padding: 10px;
+    transition: all .25s ease-in-out;
+    width: 150px;
+}
+
+button:hover {
+    background: #5599ff;
 }
