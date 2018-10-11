@@ -1,41 +1,4 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title></title>
-  <style type="text/css" media="screen">
-  div {
-    width:60px;
-    height: 60px;
-    float: left;
-    margin: 1px;
-  }
-  </style>
-</head>
-<body>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://d3js.org/d3.v3.js"></script>
-
-  <script type="text/javascript">
-
-  var body = d3.select("body"),
-    length = 200,
-    color = d3.scale.linear().domain([1,length])
-      .interpolate(d3.interpolateHcl)
-      .range([d3.rgb("#5599ff"), d3.rgb('#16fc62')]);
-
-
-  for (var i = 0; i < length; i++) {
-    body.append('div').attr('style', function (d) {
-      return 'background-color: ' + color(i);
-    });
-  }
-  </script>
-
-</body>
-</html>
--->
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,5 +55,41 @@ console.log(a.substr(0,2), a.substr(2,2), a.substr(4,2))
         }
         document.getElementById("container").innerHTML = content;
     </script>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Grafika komputerowa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>Grafika komputerowa - Zadanie 3</header>
+    <div id="color-picking">
+        <div>
+            <input type="text" id="rgb-text"><br>
+            <button id="rgb-button-text">RGB from text</button><br>
+            <div id="rgb-color-text"></div>
+        </div>
+        <div>
+            <input type="number" id="rgb-number-r" min="0" max="255"><input type="number" id="rgb-number-g" min="0" max="255"><input type="number" id="rgb-number-b" min="0" max="255"><br>
+            <button id="rgb-button-numbers">RGB from numbers</button><br>
+            <div id="rgb-color-numbers"></div>
+        </div>
+        <div>
+            <input type="text" id="hex-input"><br>
+            <button id="rgb-button-text">RGB from text</button><br>
+            <div id="hex-color-text"></div>
+        </div>
+    </div>
+    <input type="text" id="hexInput"><br>
+    <button id="hex-button-numbers">RGB from numbers</button><button id="cmyk-button">CMYK from numbers</button><br>
+    <div id="selected-rgb-color"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
