@@ -70,29 +70,52 @@ console.log(a.substr(0,2), a.substr(2,2), a.substr(4,2))
 <body>
     <header>Grafika komputerowa - Zadanie 3</header>
     <div id="color-picking">
-        <div class="picking-section">
-            <div>
-                <input type="text" id="rgb-text"><br>
-                <button id="rgb-button-text" class="clickable">RGB from text</button>
+        <div>
+            <div class="picking-section">
+                <div>
+                    Enter RGB color hash<br><br>
+                    <input type="text" id="rgb-text"><br>
+                    <button id="rgb-button-text" class="clickable">RGB from text</button>
+                </div>
+                <div id="rgb-color-text"></div>
             </div>
-            <div id="rgb-color-text"></div>
+            <span id="span-rgb-text">
+                RGB color hash:<br>
+                CMYK color:
+            </span>
         </div>
-        <div class="picking-section">
-            <div>
-                <input type="number" id="rgb-number-r" min="0" max="255"><input type="number" id="rgb-number-g" min="0" max="255"><input type="number" id="rgb-number-b" min="0" max="255"><br>
-                <button id="rgb-button-numbers" class="clickable">RGB from numbers</button>
+        <div>
+            <div class="picking-section">
+                <div>
+                    Enter RGB color components<br><br>
+                    <input type="number" id="rgb-number-r" min="0" max="255" value="0">
+                    <input type="number" id="rgb-number-g" min="0" max="255" value="0">
+                    <input type="number" id="rgb-number-b" min="0" max="255" value="0"><br>
+                    <button id="rgb-button-numbers" class="clickable">RGB from numbers</button>
+                </div>
+                <div id="rgb-color-numbers"></div>
             </div>
-            <div id="rgb-color-numbers"></div>
+            <span id="span-rgb-numbers">
+                RGB color hash:<br>
+                CMYK color:
+            </span>
         </div>
-        <div class="picking-section">
-            <div>
-                C <input type="range" id="cmyk-slider-c" min="0" max="100" value="0" step="1" /><br>
-                M <input type="range" id="cmyk-slider-m" min="0" max="100" value="0" step="1" /><br>
-                Y <input type="range" id="cmyk-slider-y" min="0" max="100" value="0" step="1" /><br>
-                K <input type="range" id="cmyk-slider-k" min="0" max="100" value="0" step="1" /><br>
-                <button id="cmyk-button" class="clickable">CMYK from sliders</button>
+        <div>
+            <div class="picking-section">
+                <div>
+                    Enter CMYK color components<br><br>
+                    C <input type="range" id="cmyk-slider-c" min="0" max="100" value="0" step="1" />
+                    M <input type="range" id="cmyk-slider-m" min="0" max="100" value="0" step="1" /><br>
+                    Y <input type="range" id="cmyk-slider-y" min="0" max="100" value="0" step="1" />
+                    K <input type="range" id="cmyk-slider-k" min="0" max="100" value="0" step="1" /><br>
+                    <button id="cmyk-button" class="clickable">CMYK from sliders</button>
+                </div>
+                <div id="cmyk-color"></div>
             </div>
-            <div id="cmyk-color"></div>
+            <span id="span-cmyk">
+                    RGB color hash:<br>
+                    CMYK color:
+            </span>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

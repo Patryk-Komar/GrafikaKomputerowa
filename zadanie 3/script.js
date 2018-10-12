@@ -4,7 +4,18 @@ $(() => {
         const rgbColor = $("#rgb-text").val();
         const rgbColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
         if (rgbColorRegex.test(rgbColor)) {
+            const cmyk = convertRGB(rgbColor.replace("#", ""));
+            const {
+                C,
+                M,
+                Y,
+                K
+            } = cmyk;
             $("div#rgb-color-text").css("background", rgbColor);
+            $("span#span-rgb-text").html(`
+                RGB color (hex): ${rgbColor}<br>
+                CMYK color: (${C}%, ${M}%, ${Y}%, ${K}%)
+            `);
         } else {
             alert("Please enter correct hexadecimal color!");
             return;
@@ -27,30 +38,48 @@ $(() => {
         const rgbColor = `#${r}${g}${b}`;
         const hexColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
         if (hexColorRegex.test(rgbColor)) {
+            const cmyk = convertRGB(rgbColor.replace("#", ""));
+            const {
+                C,
+                M,
+                Y,
+                K
+            } = cmyk;
             $("div#rgb-color-numbers").css("background", rgbColor);
+            $("span#span-rgb-numbers").html(`
+                RGB color (hex): ${rgbColor}<br>
+                CMYK color: (${C}%, ${M}%, ${Y}%, ${K}%)
+            `);
         } else {
             alert("Please enter correct hexadecimal color!");
-            return;
         }
     });
 
     $("#cmyk-button").click(() => {
-        let c = $("#cmyk-slider-c").val();
-        let m = $("#cmyk-slider-m").val();
-        let y = $("#cmyk-slider-y").val();
-        let k = $("#cmyk-slider-k").val();
-        console.log(c, m, y, k);
+        const C = $("#cmyk-slider-c").val();
+        const M = $("#cmyk-slider-m").val();
+        const Y = $("#cmyk-slider-y").val();
+        const K = $("#cmyk-slider-k").val();
+        const cmyk = {
+            C,
+            M,
+            Y,
+            K
+        };
+        const rgbColor = convertCMYK(cmyk);
+        $("div#cmyk-color").css("background", rgbColor);
+        $("span#span-cmyk").html(`
+            RGB color (hex): ${rgbColor}<br>
+            CMYK color: (${C}%, ${M}%, ${Y}%, ${K}%)
+        `);
     });
-    console.log("#65586b");
-    const x = convertRGB("65586b");
-    convertCMYK(x);
 
 });
 
 const convertRGB = (rgb) => {
-    const R = parseInt(rgb.substr(0,2), 16) / 255;
-    const G = parseInt(rgb.substr(2,2), 16) / 255;
-    const B = parseInt(rgb.substr(4,2), 16) / 255;
+    let R = parseInt(rgb.substr(0,2), 16) / 255;
+    let G = parseInt(rgb.substr(2,2), 16) / 255;
+    let B = parseInt(rgb.substr(4,2), 16) / 255;
     let K = 1 - Math.max(R, G, B);
     const C = Math.round(100 * (1 - R - K) / (1 - K));
     const M = Math.round(100 * (1 - G - K) / (1 - K));
@@ -71,9 +100,9 @@ const convertCMYK = (cmyk) => {
         Y,
         K
     } = cmyk;
-    const R = (Math.round(255 * ( 1 - C / 100 ) * ( 1 - K / 100 ))).toString(16);
-    const G = (Math.round(255 * ( 1 - M / 100 ) * ( 1 - K / 100 ))).toString(16);
-    const B = (Math.round(255 * ( 1 - Y / 100 ) * ( 1 - K / 100 ))).toString(16);
+    let R = (Math.round(255 * ( 1 - C / 100 ) * ( 1 - K / 100 ))).toString(16);
+    let G = (Math.round(255 * ( 1 - M / 100 ) * ( 1 - K / 100 ))).toString(16);
+    let B = (Math.round(255 * ( 1 - Y / 100 ) * ( 1 - K / 100 ))).toString(16);
     if (R.length === 1) {
         R = `0${R}`;
     }
@@ -83,5 +112,5 @@ const convertCMYK = (cmyk) => {
     if (B.length === 1) {
         B = `0${B}`;
     }
-    console.log(`#${R}${G}${B}`);
+    return `#${R}${G}${B}`;
 };

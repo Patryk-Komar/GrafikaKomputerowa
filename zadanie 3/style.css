@@ -28,7 +28,6 @@ header {
 }
 
 div#color-picking {
-    align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -52,13 +51,27 @@ div#rgb-color-text, div#rgb-color-numbers, div#cmyk-color {
     border-radius: 50%;
     display: inline-block;
     height: 150px;
-    margin: 20px;
+    margin: 20px 20px 0;
     transition: all .25s ease-in-out;
     width: 150px;
 }
 
 input[type="text"] {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
     width: 100px;
+}
+
+input[type="number"] {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    width: 75px;
 }
 
 button {
@@ -66,6 +79,7 @@ button {
     border: 2px solid white;
     border-radius: 20px;
     color: white;
+    margin: 10px;
     padding: 10px;
     transition: all .25s ease-in-out;
     width: 150px;
