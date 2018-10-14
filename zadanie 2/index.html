@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Grafika komputerowa</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="app">
+        <header>Grafika komputerowa - Zadanie 2</header>
+        <div class="mb-4" @change="change" @dragover="dragover" @drop="drop" style="border: 2px dashed white; color: white;">
+            <div class="card-body">
+            <div class="p-3 text-center">
+                Drag and drop your image<br>
+                <input type="file" id="file" accept="image/jpeg,image/jpg,image/jpe,image/png,image/gif,image/webp,image/bmp,image/tiff" ref="input"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+            <div>
+                <div class="card-body">
+                <h4 class="card-title">Compression options</h4><br>
+                <div class="form-group row">
+                    <label for="inputWidth" class="col-sm-5 col-form-label">width</label>
+                    <div class="col-sm-7">
+                    <input type="number" name="width" min="0" class="form-control" id="inputWidth" placeholder="-" v-model.number="options.width">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputHeight" class="col-sm-5 col-form-label">height</label>
+                    <div class="col-sm-7">
+                    <input type="number" name="height" min="0" class="form-control" id="inputHeight" placeholder="-" v-model.number="options.height">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputQuality" class="col-sm-5 col-form-label">quality</label>
+                    <div class="col-sm-7">
+                    <select class="form-control" name="quality" id="inputQuality" v-model.number="options.quality">
+                        <option value="0">0</option>
+                        <option value="0.1">0.1</option>
+                        <option value="0.2">0.2</option>
+                        <option value="0.3">0.3</option>
+                        <option value="0.4">0.4</option>
+                        <option value="0.5">0.5</option>
+                        <option value="0.6">0.6</option>
+                        <option value="0.7">0.7</option>
+                        <option value="0.8">0.8</option>
+                        <option value="0.9">0.9</option>
+                        <option value="1">1</option>
+                        <option value="">NaN</option>
+                    </select>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-lg-8 mb-4">
+            <div class="mb-4">
+                <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 d-flex">
+                    <div class="w-100 text-center" v-if="inputURL">
+                        <img class="mw-100" :src="inputURL" :alt="input.name">
+                    </div>
+                    <div v-else class="w-100" style="border: 2px dashed white; display: flex; align-items: center; justify-content: center;">
+                        Input file
+                    </div>
+                    </div>
+                    <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-12"><h4>Input (original):<br><br></h4></dt>
+                        <dt class="col-sm-5">Name:</dt>
+                        <dd class="col-sm-7">{{ input.name || 'N/A' }}</dd>
+                        <dt class="col-sm-5">Type:</dt>
+                        <dd class="col-sm-7">{{ input.type || 'N/A' }}</dd>
+                        <dt class="col-sm-5">Size:</dt>
+                        <dd class="col-sm-7">{{ input.size | prettySize }}</dd>
+                    </dl>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div>
+                <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 d-flex justify-content-center">
+                    <div class="w-100 text-center" v-if="outputURL">
+                        <img class="mw-100" :src="outputURL" :alt="output.name">
+                        <div class="mt-2">
+                        <a class="btn btn-sm btn-blocks btn-outline-primary mt-2" :download="output.name" :href="outputURL" title="Download the compressed image">Download</a>
+                        </div>
+                    </div>
+                    <div v-else class="w-100" style="border: 2px dashed white; display: flex; align-items: center; justify-content: center;">
+                        Output file
+                    </div>
+                    </div>
+                    <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-12"><h4>Output (compressed)<br><br></h4></dt>
+                        <dt class="col-sm-5">Name:</dt>
+                        <dd class="col-sm-7">{{ output.name || 'N/A' }}</dd>
+                        <dt class="col-sm-5">Type:</dt>
+                        <dd class="col-sm-7">{{ output.type || 'N/A' }}</dd>
+                        <dt class="col-sm-5">Size:</dt>
+                        <dd class="col-sm-7">{{ output.size | prettySize }}
+                        </dd>
+                    </dl>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.min.js"></script>
+    <script src="image-compressor.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
