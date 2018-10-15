@@ -15,7 +15,7 @@
         <div class="mb-4" @change="change" @dragover="dragover" @drop="drop" style="border: 2px dashed white; color: white;">
             <div class="card-body">
             <div class="p-3 text-center">
-                Drag and drop your image<br>
+                Drag and drop your image<br><br>
                 <input type="file" id="file" accept="image/jpeg,image/jpg,image/jpe,image/png,image/gif,image/webp,image/bmp,image/tiff" ref="input"></div>
             </div>
         </div>
@@ -115,6 +115,15 @@
             </div>
             </div>
         </div>
+        </div>
+    </div>
+    <div id="colors-scaling" style="display: inline-block; margin-top: 50px;">
+        <h4>Linear colors scaling<br></h4>
+        Color A: <input type="text" id="color-A">
+        Color B: <input type="text" id="color-B"><br>
+        <button class="form-control" id="colors-scaling-button" style="display: inline-block; margin: 10px; width: 100px;">Scale!</button>
+        <div id="colors-scaling-bar">
+
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

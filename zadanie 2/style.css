@@ -20,3 +20,15 @@ header {
     font-size: 36px;
     margin: 20px 0;
 }
+
+input#color-A, input#color-B {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 10px;
+    color: white;
+    display: inline-block;
+    margin: 10px;
+    padding: 5px 10px;
+    text-align: center;
+    width: 100px;
+}

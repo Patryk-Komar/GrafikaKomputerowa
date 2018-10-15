@@ -88,3 +88,9 @@ button {
 button:hover {
     background: #5599ff;
 }
+
+canvas {
+    background: black;
+    border: 2px solid white;
+    border-radius: 20px;
+}
