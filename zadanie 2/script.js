@@ -113,7 +113,7 @@ const scaleColors = () => {
   width = 0.8 * width / x;
   console.log(width);
   
-  const style = `display: inline-block; height: 100px; margin-bottom: -8px; width: ${width}px;`
+  const style = `display: inline-block; height: 100px; margin-bottom: -6px; width: ${width}px;`
 
   let content = `<div style="background: #${colorA}; ${style}"></div>`;
 
@@ -136,6 +136,6 @@ const scaleColors = () => {
       const hexColor = `${rr}${gg}${bb}`;
       content += `<div style="background: #${hexColor}; ${style}"></div>`;
   }
-  $("#colors-scaling-bar").css("border", "2px solid white");
   $("#colors-scaling-bar").html(content);
+  $("#colors-scaling-bar").css("border", "2px solid white");
 };

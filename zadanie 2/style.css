@@ -21,6 +21,14 @@ header {
     margin: 20px 0;
 }
 
+div#colors-scaling {
+    margin: 20px 0 50px;
+}
+
+div#colors-scaling-bar {
+    margin-top: 20px;
+}
+
 input#color-A, input#color-B {
     background: transparent;
     border: 2px solid white;
@@ -31,4 +39,18 @@ input#color-A, input#color-B {
     padding: 5px 10px;
     text-align: center;
     width: 100px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+a#ppm-link {
+    color: #888;
+    transition: all .25s ease-in-out;
+}
+
+a#ppm-link:hover {
+    color: white;
+    text-decoration: none;
 }

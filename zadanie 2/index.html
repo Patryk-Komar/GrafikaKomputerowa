@@ -23,23 +23,23 @@
             <div class="col-lg-4 mb-4">
             <div>
                 <div class="card-body">
-                <h4 class="card-title">Compression options</h4><br>
+                <h4 class="card-title">Options</h4><br>
                 <div class="form-group row">
-                    <label for="inputWidth" class="col-sm-5 col-form-label">width</label>
+                    <label for="inputWidth" class="col-sm-5 col-form-label">Width</label>
                     <div class="col-sm-7">
                     <input type="number" name="width" min="0" class="form-control" id="inputWidth" placeholder="-" v-model.number="options.width">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputHeight" class="col-sm-5 col-form-label">height</label>
+                    <label for="inputHeight" class="col-sm-5 col-form-label">Height</label>
                     <div class="col-sm-7">
                     <input type="number" name="height" min="0" class="form-control" id="inputHeight" placeholder="-" v-model.number="options.height">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputQuality" class="col-sm-5 col-form-label">quality</label>
+                    <label for="inputQuality" class="col-sm-5 col-form-label">Quality</label>
                     <div class="col-sm-7">
-                    <select class="form-control" name="quality" id="inputQuality" v-model.number="options.quality">
+                    <select class="form-control clickable" name="quality" id="inputQuality" v-model.number="options.quality">
                         <option value="0">0</option>
                         <option value="0.1">0.1</option>
                         <option value="0.2">0.2</option>
@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-md-8">
                     <dl class="row">
-                        <dt class="col-sm-12"><h4>Input (original):<br><br></h4></dt>
+                        <dt class="col-sm-12"><h4>Input file<br><br></h4></dt>
                         <dt class="col-sm-5">Name:</dt>
                         <dd class="col-sm-7">{{ input.name || 'N/A' }}</dd>
                         <dt class="col-sm-5">Type:</dt>
@@ -100,7 +100,7 @@
                     </div>
                     <div class="col-md-8">
                     <dl class="row">
-                        <dt class="col-sm-12"><h4>Output (compressed)<br><br></h4></dt>
+                        <dt class="col-sm-12"><h4>Output file<br><br></h4></dt>
                         <dt class="col-sm-5">Name:</dt>
                         <dd class="col-sm-7">{{ output.name || 'N/A' }}</dd>
                         <dt class="col-sm-5">Type:</dt>
@@ -117,13 +117,15 @@
         </div>
         </div>
     </div>
+    <div style="margin-top: 20px;;">
+        <a href="ppm.html" id="ppm-link"><h4>PPM files parser</h4></a>
+    </div>
     <div id="colors-scaling" style="display: inline-block; margin-top: 50px;">
         <h4>Linear colors scaling<br></h4>
         Color A: <input type="text" id="color-A">
         Color B: <input type="text" id="color-B"><br>
-        <button class="form-control" id="colors-scaling-button" style="display: inline-block; margin: 10px; width: 100px;">Scale!</button>
+        <button class="form-control clickable" id="colors-scaling-button" style="display: inline-block; margin: 10px; width: 100px;">Scale!</button>
         <div id="colors-scaling-bar">
-
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
