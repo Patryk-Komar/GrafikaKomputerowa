@@ -1,57 +1,54 @@
 (() => {	
 	const Image = function(data) {
-		
-		const exp = /^(\S+)\s+(\#.*?\n)*\s*(\d+)\s+(\d+)\s+(\d+)?\s*/,
-			match = data.match (exp);
-		// console.log(data);
+		const exp = /^(\S+)\s+(\#.*?\n)*\s*(\d+)\s+(\d+)\s+(\d+)?\s*/;
+		let match = data.match(exp);
 		if (match) {
-			console.log(match);
 			const width = this.width = parseInt (match[3], 10),
 				height = this.height = parseInt (match[4], 10),
 				maxVal = parseInt (match[5], 10),
 				bytes = (maxVal < 256)? 1 : 2;
 			data = data.substr (match[0].length);
-
 			switch (match[1]) {
-				
-				case 'P1':
-					this._parser = new ASCIIParser (maxVal + ' ' + data, bytes);
-					this._formatter = new PBMFormatter (width, height);
-					break;
-
-				case 'P2':
-					this._parser = new ASCIIParser (data, bytes);
-					this._formatter = new PGMFormatter (width, height, maxVal);
-					break;
-
 				case 'P3':
 					this._parser = new ASCIIParser (data, bytes);
 					this._formatter = new PPMFormatter (width, height, maxVal);
 					break;
-
-				case 'P4':
-					this._parser = new BinaryParser (data, bytes);
-					this._formatter = new PBMFormatter (width, height);
-					break;
-
-				case 'P5':
-					this._parser = new BinaryParser (data, bytes);
-					this._formatter = new PGMFormatter (width, height, maxVal);
-					break;
-
 				case 'P6':
 					this._parser = new BinaryParser (data, bytes);
 					this._formatter = new PPMFormatter (width, height, maxVal);
 					break;
-				
 				default:
 					throw new TypeError ('Sorry, your file format is not supported. [' + match[1] + ']');
-					return false;
 			}
-			
-		} else {			
-			throw new TypeError ('Sorry, file does not appear to be a Netpbm file.');
-			return false;
+		} else {
+			data = data.split("\n");
+			console.log(data);
+			data = data.filter(line => line.charAt(0) !== "#");
+			data = data.map(line => line.split("#")[0].trim());
+			data = data.filter(line => line.length !== 0);
+			data = data.join("\n");
+			match = data.match(exp);
+			if (match) {
+				const width = this.width = parseInt (match[3], 10),
+					height = this.height = parseInt (match[4], 10),
+					maxVal = parseInt (match[5], 10),
+					bytes = (maxVal < 256)? 1 : 2;
+				data = data.substr (match[0].length);
+				switch (match[1]) {
+					case 'P3':
+						this._parser = new ASCIIParser (data, bytes);
+						this._formatter = new PPMFormatter (width, height, maxVal);
+						break;
+					case 'P6':
+						this._parser = new BinaryParser (data, bytes);
+						this._formatter = new PPMFormatter (width, height, maxVal);
+						break;
+					default:
+						throw new TypeError ('Sorry, your file format is not supported. [' + match[1] + ']');
+				}
+			} else {
+				throw new TypeError ('Sorry, file does not appear to be a Netpbm file.');
+			}
 		}
 	};
 	
