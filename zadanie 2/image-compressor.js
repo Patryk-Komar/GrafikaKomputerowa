@@ -224,42 +224,6 @@
 	  }
 	  return orientation;
 	}
-	function parseOrientation(orientation) {
-	  var rotate = 0;
-	  var scaleX = 1;
-	  var scaleY = 1;
-	  switch (orientation) {
-	    case 2:
-	      scaleX = -1;
-	      break;
-	    case 3:
-	      rotate = -180;
-	      break;
-	    case 4:
-	      scaleY = -1;
-	      break;
-	    case 5:
-	      rotate = 90;
-	      scaleY = -1;
-	      break;
-	    case 6:
-	      rotate = 90;
-	      break;
-	    case 7:
-	      rotate = 90;
-	      scaleX = -1;
-	      break;
-	    case 8:
-	      rotate = -90;
-	      break;
-	    default:
-	  }
-	  return {
-	    rotate: rotate,
-	    scaleX: scaleX,
-	    scaleY: scaleY
-	  };
-	}
 	var REGEXP_DECIMALS = /\.\d*(?:0|9){12}\d*$/i;
 	function normalizeDecimalNumber(value) {
 	  var times = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100000000000;
