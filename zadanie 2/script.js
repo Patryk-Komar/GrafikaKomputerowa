@@ -1,26 +1,23 @@
-window.addEventListener('DOMContentLoaded', function () {
-  var Vue = window.Vue;
-  var URL = window.URL || window.webkitURL;
-  var ImageCompressor = window.ImageCompressor;
+window.addEventListener('DOMContentLoaded', () => {
+  const Vue = window.Vue;
+  const URL = window.URL || window.webkitURL;
+  const ImageCompressor = window.ImageCompressor;
 
   new Vue({
+
     el: '#app',
 
     data: function () {
-      var vm = this;
-
+      const vm = this;
       return {
         options: {
           width: undefined,
           height: undefined,
           quality: 1,
-          success: function (file) {
-            console.log('Output: ', file);
-
+          success: function(file) {
             if (URL) {
               vm.outputURL = URL.createObjectURL(file);
             }
-
             vm.output = file;
             vm.$refs.input.value = '';
           },
@@ -36,10 +33,9 @@ window.addEventListener('DOMContentLoaded', function () {
     },
 
     filters: {
-      prettySize: function (size) {
-        var kilobyte = 1024;
-        var megabyte = kilobyte * kilobyte;
-
+      prettySize: function(size) {
+        const kilobyte = 1024;
+        const megabyte = kilobyte * kilobyte;
         if (size > megabyte) {
           return (size / megabyte).toFixed(2) + ' MB';
         } else if (size > kilobyte) {
@@ -47,50 +43,47 @@ window.addEventListener('DOMContentLoaded', function () {
         } else if (size >= 0) {
           return size + ' B';
         }
-
         return 'N/A';
       },
     },
 
     methods: {
-      compress: function (file) {
+      compress: function(file) {
         if (!file) {
           return;
         }
-
-        console.log('Input: ', file);
-
         if (URL) {
           this.inputURL = URL.createObjectURL(file);
         }
-
         this.input = file;
         new ImageCompressor(file, this.options);
       },
-
       change: function (e) {
         this.compress(e.target.files ? e.target.files[0] : null);
       },
-
       dragover: function(e) {
         e.preventDefault();
       },
-
       drop: function(e) {
         e.preventDefault();
         this.compress(e.dataTransfer.files ? e.dataTransfer.files[0] : null);
       },
-    },
+    }
+
   });
 
   $("button#colors-scaling-button").click(scaleColors);
 
 });
 
+
+
 const scaleColors = () => {
   let colorA = $("#color-A").val();
   let colorB = $("#color-B").val();
+
   const rgbColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
+
   if (!rgbColorRegex.test(colorA) || !rgbColorRegex.test(colorB)) {
     alert("Please enter correct RGB colors!");
     return;
@@ -111,7 +104,6 @@ const scaleColors = () => {
 
   let width = parseInt($("body").css("width").replace("px", ""));
   width = 0.8 * width / x;
-  console.log(width);
   
   const style = `display: inline-block; height: 100px; margin-bottom: -6px; width: ${width}px;`
 

@@ -54,3 +54,14 @@ a#ppm-link:hover {
     color: white;
     text-decoration: none;
 }
+
+a#download {
+    color: #888;
+    font-size: 24px;
+    transition: all .25s ease-in-out;
+}
+
+a#download:hover {
+    color: white;
+    text-decoration: none;
+}
