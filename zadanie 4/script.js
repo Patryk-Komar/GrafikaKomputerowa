@@ -140,4 +140,18 @@ $(() => {
         } 
     };
 
+    const detectEdges = () => {
+        const edges = new Array(canvas.width).fill(new Array(canvas.height).fill(false));
+        /*
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                const grayColor = Math.round(0.21 * pixel.data[0] + 0.72 * pixel.data[1] + 0.07 * pixel.data[2]);
+                pixel.data[0] = pixel.data[1] = pixel.data[2] = grayColor;
+                context.putImageData(pixel, i, j);
+            }
+        }
+        */
+    };
+
 });
