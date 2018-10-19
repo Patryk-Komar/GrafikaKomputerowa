@@ -38,7 +38,7 @@ $(() => {
         const y = event.pageY - posY;
         */
         // addColor("#5599ff");
-        grayscaleLuminosity();
+        detectEdges();
     });
 
     const addColor = color => {
@@ -141,17 +141,69 @@ $(() => {
     };
 
     const detectEdges = () => {
-        const edges = new Array(canvas.width).fill(new Array(canvas.height).fill(false));
-        /*
         for (let i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const pixel = context.getImageData(i, j, 1, 1);
-                const grayColor = Math.round(0.21 * pixel.data[0] + 0.72 * pixel.data[1] + 0.07 * pixel.data[2]);
-                pixel.data[0] = pixel.data[1] = pixel.data[2] = grayColor;
+                const [
+                    r,
+                    g,
+                    b
+                ] = pixel.data;
+                let edge = false;
+                /*
+                if (j + 1 < canvas.height) {
+                    const downPixel = context.getImageData(i, j + 1, 1, 1);
+                    const [
+                        downR,
+                        downB,
+                        downG
+                    ] = downPixel.data;
+                    if (Math.max(Math.abs(r - downR), Math.abs(g - downG), Math.abs(b - downB)) > 100) {
+                        edge = true;
+                    }
+                }
+                if (i + 1 < canvas.width) {
+                    const rightPixel = context.getImageData(i + 1, j, 1, 1);
+                    const [
+                        rightR,
+                        rightG,
+                        rightB
+                    ] = rightPixel.data;
+                    if (Math.max(Math.abs(r - rightR), Math.abs(g - rightG), Math.abs(b - rightB)) > 100) {
+                        edge = true;
+                    }
+                }
+                */
+                if (j + 1 < canvas.height) {
+                    const downPixel = context.getImageData(i, j + 1, 1, 1);
+                    const [
+                        downR,
+                        downB,
+                        downG
+                    ] = downPixel.data;
+                    if (Math.min(Math.abs(r - downR), Math.abs(g - downG), Math.abs(b - downB)) > 15) {
+                        edge = true;
+                    }
+                }
+                if (i + 1 < canvas.width) {
+                    const rightPixel = context.getImageData(i + 1, j, 1, 1);
+                    const [
+                        rightR,
+                        rightG,
+                        rightB
+                    ] = rightPixel.data;
+                    if (Math.min(Math.abs(r - rightR), Math.abs(g - rightG), Math.abs(b - rightB)) > 15) {
+                        edge = true;
+                    }
+                }
+                if (edge) {
+                    pixel.data[0] = pixel.data[1] = pixel.data[2] = 255;
+                } else {
+                    pixel.data[0] = pixel.data[1] = pixel.data[2] = 0;
+                }
                 context.putImageData(pixel, i, j);
             }
         }
-        */
     };
 
 });
