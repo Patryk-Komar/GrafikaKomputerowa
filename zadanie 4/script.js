@@ -3,6 +3,8 @@ $(() => {
     const canvas = $("#canvas")[0];
     const context = canvas.getContext("2d");
 
+    let loadedFile;
+
     document.getElementById("drop-area").addEventListener("dragover", event => {
         event.preventDefault();
     }, true);
@@ -27,6 +29,7 @@ $(() => {
                 image.src = event.target.result;
             };
             reader.readAsDataURL(file);
+            loadedFile = file;
         }
     };
 
@@ -38,7 +41,10 @@ $(() => {
         const y = event.pageY - posY;
         */
         // addColor("#5599ff");
-        detectEdges();
+        // detectEdges();
+        // StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, 5);
+        // averageFilter();
+        sharpenFilter();
     });
 
     const addColor = color => {
@@ -140,6 +146,582 @@ $(() => {
         } 
     };
 
+    const averageFilter = () => {
+        const start = Date.now();
+        const filteredImage = [];
+        for (let i = 0; i < canvas.width; i++) {
+            filteredImage[i] = [];
+            for (let j = 0; j < canvas.height; j++) {
+                filteredImage[i][j] = [];
+                let R, G, B;
+                if (i === 0) {
+                    if (j === 0) {
+                        R = Math.round((
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j + 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j, 1, 1).data[0] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j + 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j, 1, 1).data[1] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 4);
+                    } else if (j < canvas.height - 1) {
+                        R = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j + 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j, 1, 1).data[0] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j + 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j, 1, 1).data[1] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 6);
+                    } else if (j === canvas.height - 1) {
+                        R = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2]) / 4);
+                    }
+                } else if (i < canvas.width - 1) {
+                    if (j === 0) {
+                        R = Math.round((
+                            context.getImageData(i - 1, j, 1, 1).data[0] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j + 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j, 1, 1).data[0] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            context.getImageData(i - 1, j, 1, 1).data[1] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j + 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j, 1, 1).data[1] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            context.getImageData(i - 1, j, 1, 1).data[2] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 6);
+                    } else if (j < canvas.height - 1) {
+                        R = Math.round((
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i - 1, j, 1, 1).data[0] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0] +
+                            context.getImageData(i, j - 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j + 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j, 1, 1).data[0] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 9);
+                        G = Math.round((
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i - 1, j, 1, 1).data[1] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1] +
+                            context.getImageData(i, j - 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j + 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j, 1, 1).data[1] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 9);
+                        B = Math.round((
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i - 1, j, 1, 1).data[2] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2] +
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 9);
+                    } else if (j === canvas.height - 1) {
+                        R = Math.round((
+                            context.getImageData(i - 1, j, 1, 1).data[0] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j - 1, 1, 1).data[0] +
+                            context.getImageData(i + 1, j, 1, 1).data[0] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            context.getImageData(i - 1, j, 1, 1).data[1] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j - 1, 1, 1).data[1] +
+                            context.getImageData(i + 1, j, 1, 1).data[1] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            context.getImageData(i - 1, j, 1, 1).data[2] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2]) / 6);
+                    }
+                } else if (i === canvas.width - 1) {
+                    if (j === 0) {
+                        R = Math.round((
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j + 1, 1, 1).data[0] +
+                            context.getImageData(i - 1, j, 1, 1).data[0] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j + 1, 1, 1).data[1] +
+                            context.getImageData(i - 1, j, 1, 1).data[1] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i - 1, j, 1, 1).data[2] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2]) / 4);
+                    } else if (j < canvas.height - 1) {
+                        R = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i, j + 1, 1, 1).data[0] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i - 1, j, 1, 1).data[0] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i, j + 1, 1, 1).data[1] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i - 1, j, 1, 1).data[1] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i - 1, j, 1, 1).data[2] +
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2]) / 6);
+                    } else if (j === canvas.height - 1) {
+                        R = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[0] +
+                            context.getImageData(i, j, 1, 1).data[0] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            context.getImageData(i - 1, j, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[1] +
+                            context.getImageData(i, j, 1, 1).data[1] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            context.getImageData(i - 1, j, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i - 1, j, 1, 1).data[2]) / 4);
+                    }
+                }
+                filteredImage[i][j][0] = R;
+                filteredImage[i][j][1] = G;
+                filteredImage[i][j][2] = B;
+            }
+        }
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                pixel.data[0] = filteredImage[i][j][0];
+                pixel.data[1] = filteredImage[i][j][1];
+                pixel.data[2] = filteredImage[i][j][2];
+                context.putImageData(pixel, i, j);
+            }
+        }
+        const stop = Date.now();
+        console.log(stop - start);
+    };
+
+
+
+
+    const medianFilter = () => {
+        const start = Date.now();
+        const filteredImage = [];
+        for (let i = 0; i < canvas.width; i++) {
+            filteredImage[i] = [];
+            for (let j = 0; j < canvas.height; j++) {
+                filteredImage[i][j] = [];
+                let R, G, B;
+                if (i === 0) {
+                    if (j === 0) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j + 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j, 1, 1).data[0],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j + 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j, 1, 1).data[1],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j + 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j, 1, 1).data[2],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    } else if (j < canvas.height - 1) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j - 1, 1, 1).data[0],
+                            context.getImageData(i, j + 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j, 1, 1).data[0],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j - 1, 1, 1).data[1],
+                            context.getImageData(i, j + 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j, 1, 1).data[1],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j - 1, 1, 1).data[2],
+                            context.getImageData(i, j + 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j, 1, 1).data[2],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    } else if (j === canvas.height - 1) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j - 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j, 1, 1).data[0],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j - 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j, 1, 1).data[1],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j - 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j, 1, 1).data[2],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    }
+                } else if (i < canvas.width - 1) {
+                    if (j === 0) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j + 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j, 1, 1).data[0],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j, 1, 1).data[0],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j + 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j, 1, 1).data[1],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j, 1, 1).data[1],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j + 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j, 1, 1).data[2],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j, 1, 1).data[2],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    } else if (j < canvas.height - 1) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j - 1, 1, 1).data[0],
+                            context.getImageData(i, j + 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j, 1, 1).data[0],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j, 1, 1).data[0],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j - 1, 1, 1).data[1],
+                            context.getImageData(i, j + 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j, 1, 1).data[1],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j, 1, 1).data[1],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j - 1, 1, 1).data[2],
+                            context.getImageData(i, j + 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j, 1, 1).data[2],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j, 1, 1).data[2],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    } else if (j === canvas.height - 1) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j - 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j, 1, 1).data[0],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0],
+                            context.getImageData(i + 1, j, 1, 1).data[0],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j - 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j, 1, 1).data[1],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1],
+                            context.getImageData(i + 1, j, 1, 1).data[1],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j - 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j, 1, 1).data[2],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2],
+                            context.getImageData(i + 1, j, 1, 1).data[2],
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    }
+                } else if (i === canvas.width - 1) {
+                    if (j === 0) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j + 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j, 1, 1).data[0],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j + 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j, 1, 1).data[1],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j + 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j, 1, 1).data[2],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    } else if (j < canvas.height - 1) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j - 1, 1, 1).data[0],
+                            context.getImageData(i, j + 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j, 1, 1).data[0],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j - 1, 1, 1).data[1],
+                            context.getImageData(i, j + 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j, 1, 1).data[1],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j - 1, 1, 1).data[2],
+                            context.getImageData(i, j + 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j, 1, 1).data[2],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j + 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    } else if (j === canvas.height - 1) {
+                        let Rs = [
+                            context.getImageData(i, j, 1, 1).data[0],
+                            context.getImageData(i, j - 1, 1, 1).data[0],
+                            context.getImageData(i - 1, j, 1, 1).data[0],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[0]
+                        ];
+                        Rs = Rs.sort((a, b) => a - b);
+                        R = Rs.length % 2 === 0 ?
+                            Math.round((Rs[Rs.length / 2 - 1] + Rs[Rs.length / 2]) / 2) :
+                            Rs[Math.round(Rs.length / 2) - 1];
+                        let Gs = [
+                            context.getImageData(i, j, 1, 1).data[1],
+                            context.getImageData(i, j - 1, 1, 1).data[1],
+                            context.getImageData(i - 1, j, 1, 1).data[1],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[1]
+                        ];
+                        Gs = Gs.sort((a, b) => a - b);
+                        G = Gs.length % 2 === 0 ?
+                            Math.round((Gs[Gs.length / 2 - 1] + Gs[Gs.length / 2]) / 2) :
+                            Gs[Math.round(Gs.length / 2) - 1];
+                        let Bs = [
+                            context.getImageData(i, j, 1, 1).data[2],
+                            context.getImageData(i, j - 1, 1, 1).data[2],
+                            context.getImageData(i - 1, j, 1, 1).data[2],
+                            context.getImageData(i - 1, j - 1, 1, 1).data[2]
+                        ];
+                        Bs = Bs.sort((a, b) => a - b);
+                        B = Bs.length % 2 === 0 ?
+                            Math.round((Bs[Bs.length / 2 - 1] + Bs[Bs.length / 2]) / 2) :
+                            Bs[Math.round(Bs.length / 2) - 1];
+                    }
+                }
+                filteredImage[i][j][0] = R;
+                filteredImage[i][j][1] = G;
+                filteredImage[i][j][2] = B;
+            }
+        }
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                pixel.data[0] = filteredImage[i][j][0];
+                pixel.data[1] = filteredImage[i][j][1];
+                pixel.data[2] = filteredImage[i][j][2];
+                context.putImageData(pixel, i, j);
+            }
+        }
+        const stop = Date.now();
+        console.log(stop - start);
+    };
+
+
+
+
+
+
+
     const detectEdges = () => {
         for (let i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
@@ -150,30 +732,6 @@ $(() => {
                     b
                 ] = pixel.data;
                 let edge = false;
-                /*
-                if (j + 1 < canvas.height) {
-                    const downPixel = context.getImageData(i, j + 1, 1, 1);
-                    const [
-                        downR,
-                        downB,
-                        downG
-                    ] = downPixel.data;
-                    if (Math.max(Math.abs(r - downR), Math.abs(g - downG), Math.abs(b - downB)) > 100) {
-                        edge = true;
-                    }
-                }
-                if (i + 1 < canvas.width) {
-                    const rightPixel = context.getImageData(i + 1, j, 1, 1);
-                    const [
-                        rightR,
-                        rightG,
-                        rightB
-                    ] = rightPixel.data;
-                    if (Math.max(Math.abs(r - rightR), Math.abs(g - rightG), Math.abs(b - rightB)) > 100) {
-                        edge = true;
-                    }
-                }
-                */
                 if (j + 1 < canvas.height) {
                     const downPixel = context.getImageData(i, j + 1, 1, 1);
                     const [
@@ -204,6 +762,222 @@ $(() => {
                 context.putImageData(pixel, i, j);
             }
         }
+    };
+
+    const sharpenFilter = () => {
+        const start = Date.now();
+        const filteredImage = [];
+        for (let i = 0; i < canvas.width; i++) {
+            filteredImage[i] = [];
+            for (let j = 0; j < canvas.height; j++) {
+                filteredImage[i][j] = [];
+                let R, G, B;
+                if (i === 0) {
+                    if (j === 0) {
+                        R = Math.round((
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 6);
+                    } else if (j < canvas.height - 1) {
+                        R = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            context.getImageData(i, j - 1, 1, 1).data[2] +
+                            context.getImageData(i, j, 1, 1).data[2] +
+                            context.getImageData(i, j + 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                            context.getImageData(i + 1, j, 1, 1).data[2] +
+                            context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 4);
+                    } else if (j === canvas.height - 1) {
+                        R = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[2] +
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[2]) / 6);
+                    }
+                } else if (i < canvas.width - 1) {
+                    if (j === 0) {
+                        R = Math.round((
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[0] +
+                            -1 *  context.getImageData(i - 1, j + 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[2] +
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 4);
+                    } else if (j < canvas.height - 1) {
+                        R = Math.round((
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[0]));
+                        G = Math.round((
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[1]));
+                        B = Math.round((
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[2] +
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j + 1, 1, 1).data[2]));
+                    } else if (j === canvas.height - 1) {
+                        R = Math.round((
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i + 1, j - 1, 1, 1).data[2]) / 4);
+                    }
+                } else if (i === canvas.width - 1) {
+                    if (j === 0) {
+                        R = Math.round((
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[2]) / 6);
+                    } else if (j < canvas.height - 1) {
+                        R = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[0]) / 4);
+                        G = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[1]) / 4);
+                        B = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[2] +
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i, j + 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j + 1, 1, 1).data[2]) / 4);
+                    } else if (j === canvas.height - 1) {
+                        R = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[0] +
+                            9 * context.getImageData(i, j, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[0]) / 6);
+                        G = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[1] +
+                            9 * context.getImageData(i, j, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[1]) / 6);
+                        B = Math.round((
+                            -1 * context.getImageData(i, j - 1, 1, 1).data[2] +
+                            9 * context.getImageData(i, j, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                            -1 * context.getImageData(i - 1, j, 1, 1).data[2]) / 6);
+                    }
+                }
+                filteredImage[i][j][0] = R;
+                filteredImage[i][j][1] = G;
+                filteredImage[i][j][2] = B;
+            }
+        }
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                pixel.data[0] = filteredImage[i][j][0];
+                pixel.data[1] = filteredImage[i][j][1];
+                pixel.data[2] = filteredImage[i][j][2];
+                context.putImageData(pixel, i, j);
+            }
+        }
+        const stop = Date.now();
+        console.log(stop - start);
     };
 
 });
