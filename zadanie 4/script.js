@@ -47,6 +47,70 @@ $(() => {
         sharpenFilter();
     });
 
+    $("#button-add").click(() => {
+        const rgbColor = $("#rgb-color").val();
+        const hexColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
+        if (hexColorRegex.test(rgbColor)) {
+            addColor(rgbColor.replace("#", ""));
+        } else {
+            alert("Enter valid RGB value");
+        }
+    });
+
+    $("#button-subtract").click(() => {
+        const rgbColor = $("#rgb-color").val();
+        const hexColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
+        if (hexColorRegex.test(rgbColor)) {
+            subtractColor(rgbColor.replace("#", ""));
+        } else {
+            alert("Enter valid RGB value");
+        }
+    });
+
+    $("#button-multiply").click(() => {
+        const rgbColor = $("#rgb-color").val();
+        const hexColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
+        if (hexColorRegex.test(rgbColor)) {
+            multiplyByColor(rgbColor.replace("#", ""));
+        } else {
+            alert("Enter valid RGB value");
+        }
+    });
+
+    $("#button-brightness").click(() => {
+        const brightness = parseInt($("#slider-brightness").val());
+        changeBrightness(brightness);
+    });
+
+    $("#button-grayscale-1").click(() => {
+        grayscaleAverage();
+    });
+
+    $("#button-grayscale-2").click(() => {
+        grayscaleLightness();
+    });
+
+    $("#button-average-filter").click(() => {
+        averageFilter();
+    });
+
+    $("#button-median-filter").click(() => {
+        medianFilter();
+    });
+
+    $("#button-sobel-filter").click(() => {
+        detectEdges();
+    });
+
+    $("#button-sharpen-filter").click(() => {
+        sharpenFilter();
+    });
+
+    $("#button-gaussian-filter").click(() => {
+        const radius = parseInt($("#gaussian-blur-radius").val());
+        StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, radius);
+    });
+
     const addColor = color => {
         const addRGB = color.replace("#", "");
         const addR = parseInt(addRGB.substr(0,2), 16);
@@ -87,15 +151,16 @@ $(() => {
         for (let i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const pixel = context.getImageData(i, j, 1, 1);
-                pixel.data[0] = Math.round((pixelData.data[0] * multiplyR) / 255);
-                pixel.data[1] = Math.round((pixelData.data[1] * multiplyG) / 255);
-                pixel.data[2] = Math.round((pixelData.data[2] * multiplyB) / 255);
+                pixel.data[0] = Math.round((pixel.data[0] * multiplyR) / 255);
+                pixel.data[1] = Math.round((pixel.data[1] * multiplyG) / 255);
+                pixel.data[2] = Math.round((pixel.data[2] * multiplyB) / 255);
                 context.putImageData(pixel, i, j);
             }
         }
     };
 
     const changeBrightness = brightnessLevel => {
+        console.log(brightnessLevel);
         if (brightnessLevel < -255 || brightnessLevel > 255) {
             alert("Enter correct brighter level! (-255 ... 255)");
             return;

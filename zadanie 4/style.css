@@ -12,6 +12,7 @@ body {
       ), url("../assets/background.webp");
     background-size: cover;
     color: white;
+    min-height: 150vh;
     text-align: center;
 }
 
@@ -34,4 +35,30 @@ div#drop-area {
 .m-a {
     float: none;
     margin: 0 auto;
+}
+
+.tools {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+button {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    margin: 5px;
+    padding: 5px 10px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+input {
+    color: black;
 }

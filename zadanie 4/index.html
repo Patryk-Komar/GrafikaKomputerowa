@@ -15,6 +15,46 @@
             <div id="drop-area" class="col-sm-6 m-a">Drag and drop your image here!</div>
         </div>
         <div class="row" style="text-align: center;">
+            <div class="tools" class="col-sm-12">
+                <div>
+                    Enter RGB color<br>
+                    <input type="text" id="rgb-color"><br>
+                    <button class="clickable" id="button-add">Add color</button>
+                    <button class="clickable" id="button-subtract">Subtract color</button>
+                    <button class="clickable" id="button-multiply">Multiply by color</button>
+                </div>
+                <div>
+                    Select brightness level<br>
+                    <input type="range" min="-255" max="255" step="1" id="slider-brightness" style="width: 200px;"><br>
+                    <button class="clickable" id="button-brightness">Apply</button>
+                </div>
+                <div>
+                    Apply grayscale<br>
+                    <button class="clickable" id="button-grayscale-1">Average</button>
+                    <button class="clickable" id="button-grayscale-2">Lightness</button>
+                </div>
+            </div>
+            <div class="tools">
+                <div>
+                    <button class="clickable" id="button-average-filter">Apply average filter</button>
+                </div>
+                <div>
+                    <button class="clickable" id="button-median-filter">Apply median filter</button>
+                </div>
+                <div>
+                    <button class="clickable" id="button-sobel-filter">Apply sobel filter</button>
+                </div>
+                <div>
+                    <button class="clickable" id="button-sharpen-filter">Apply sharpen filter</button>
+                </div>
+                <div>
+                    Select gauusian blur radius<br>
+                    <input type="range" min="1" max="10" step="1" id="gaussian-blur-radius" style="width: 100px;"><br>
+                    <button class="clickable" id="button-gaussian-filter">Apply gaussian blur</button>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="text-align: center;">
             <canvas id="canvas"></canvas>
         </div>
     </div>
