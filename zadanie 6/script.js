@@ -115,6 +115,8 @@ $(() => {
                 if (comparePoints(point, clickedPoints[i])) {
                     mouseDown = true;
                     changingPointIndex = i;
+                    $("#edit-x").val(clickedPoints[i].x);
+                    $("#edit-y").val(clickedPoints[i].y);
                     break;
                 }
             }
@@ -129,7 +131,7 @@ $(() => {
             drawBezierCurve();
         }
         mouseDown = false;
-        changingPointIndex = -1;
+        // changingPointIndex = -1;
     });
 
     $("#canvas").mousemove((event) => {
@@ -143,6 +145,16 @@ $(() => {
 
     $("#control-points").change((event) => {
         clicks = parseInt(event.target.value);
+    });
+
+    $("#coords").click(() => {
+        if (changingPointIndex >= 0) {
+            const x = $("#edit-x").val();
+            const y = $("#edit-y").val();
+            clickedPoints[changingPointIndex] = new Point(x, y);
+            drawBezierCurve();
+            changingPointIndex = -1;
+        }
     });
 
     $("#reset").click(() => {
