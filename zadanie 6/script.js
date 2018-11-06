@@ -23,7 +23,6 @@ $(() => {
     posX = $("#canvas").position().left;
     posY = $("#canvas").position().top;
 
-    context.strokeStyle = "white";
     context.fillStyle = "white";
 
     width = context.canvas.width;
@@ -36,7 +35,7 @@ $(() => {
     const B = new Point(310, 100);
     const C = new Point(550, 500);
 
-    const clicks = 10;
+    const clicks = 4;
     let clicksCounter = 0;
 
     const factorial = (number) => {
@@ -62,9 +61,19 @@ $(() => {
             const y = event.pageY - posY;
             clickedPoints[clicksCounter] = new Point(x, y);
             // console.log(clickedPoints[clicksCounter]);
+            context.beginPath();
+            if (clicksCounter === 0 || clicksCounter === clicks - 1) {
+                context.fillStyle = "#ff0000";
+                context.arc(x, y, 5, 0,2 * Math.PI);
+            } else {
+                context.fillStyle = "#ff8080";
+                context.arc(x, y, 3, 0,2 * Math.PI);
+            }
+            context.fill();
             clicksCounter += 1;
         }
         if (clicksCounter === clicks) {
+            context.fillStyle = "#ffffff";
             // console.log(clickedPoints);
             for (let i = 0; i <= steps; i++) {
                 let a = 0;
