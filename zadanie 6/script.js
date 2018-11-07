@@ -122,7 +122,6 @@ $(() => {
             drawBezierCurve();
         }
         mouseDown = false;
-        // changingPointIndex = -1;
     });
 
     $("#canvas").mousemove((event) => {
