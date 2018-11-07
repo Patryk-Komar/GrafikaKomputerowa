@@ -111,6 +111,10 @@ $(() => {
         StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, radius);
     });
 
+    $("#reset").click(() => {
+        handleFile(loadedFile);
+    });
+
     const addColor = color => {
         const addRGB = color.replace("#", "");
         const addR = parseInt(addRGB.substr(0,2), 16);
@@ -160,7 +164,6 @@ $(() => {
     };
 
     const changeBrightness = brightnessLevel => {
-        console.log(brightnessLevel);
         if (brightnessLevel < -255 || brightnessLevel > 255) {
             alert("Enter correct brighter level! (-255 ... 255)");
             return;
@@ -424,7 +427,6 @@ $(() => {
             }
         }
         const stop = Date.now();
-        console.log(stop - start);
     };
 
 
@@ -778,7 +780,6 @@ $(() => {
             }
         }
         const stop = Date.now();
-        console.log(stop - start);
     };
 
 
@@ -1042,7 +1043,6 @@ $(() => {
             }
         }
         const stop = Date.now();
-        console.log(stop - start);
     };
 
 });
