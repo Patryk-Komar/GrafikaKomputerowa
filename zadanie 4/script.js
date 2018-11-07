@@ -77,6 +77,16 @@ $(() => {
         }
     });
 
+    $("#button-divide").click(() => {
+        const rgbColor = $("#rgb-color").val();
+        const hexColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
+        if (hexColorRegex.test(rgbColor)) {
+            divideByColor(rgbColor.replace("#", ""));
+        } else {
+            alert("Enter valid RGB value");
+        }
+    });
+
     $("#button-brightness").click(() => {
         const brightness = parseInt($("#slider-brightness").val());
         changeBrightness(brightness);
@@ -88,6 +98,10 @@ $(() => {
 
     $("#button-grayscale-2").click(() => {
         grayscaleLightness();
+    });
+
+    $("#button-grayscale-3").click(() => {
+        grayscaleLuminosity();
     });
 
     $("#button-average-filter").click(() => {
@@ -158,6 +172,22 @@ $(() => {
                 pixel.data[0] = Math.round((pixel.data[0] * multiplyR) / 255);
                 pixel.data[1] = Math.round((pixel.data[1] * multiplyG) / 255);
                 pixel.data[2] = Math.round((pixel.data[2] * multiplyB) / 255);
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const divideByColor = color => {
+        const divideRGB = color.replace("#", "");
+        const divideR = parseInt(divideRGB.substr(0,2), 16);
+        const divideG = parseInt(divideRGB.substr(2,2), 16);
+        const divideB = parseInt(divideRGB.substr(4,2), 16);
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                pixel.data[0] = Math.round((pixel.data[0] / divideR) * 255);
+                pixel.data[1] = Math.round((pixel.data[1] / divideG) * 255);
+                pixel.data[2] = Math.round((pixel.data[2] / divideB) * 255);
                 context.putImageData(pixel, i, j);
             }
         }
