@@ -36,10 +36,6 @@ $(() => {
     start = new Point(200, 200);
     finish = new Point(400, 200);
 
-    const A = new Point(220, 300);
-    const B = new Point(310, 100);
-    const C = new Point(550, 500);
-
     let clicks = 3;
     let clicksCounter = 0;
 
