@@ -44,20 +44,15 @@ $(() => {
     let clicksCounter = 0;
 
     const factorial = (number) => {
-        // validating the input
         number = parseInt(number, 10);
         if (isNaN(number)) return 1;
-        
-        // if x below 0, return 1
         if (number <= 0) return 1;
-        // if x above 170, return infinity
         if (number > 170) return Infinity;
-        // calculating the factorial
-        var y = 1
-        for (var i = number; i>0; i--){
-            y *= i;
+        let result = 1
+        for (let i = number; i > 0; i--){
+            result *= i;
         }
-        return y;
+        return result;
     };
 
     const drawBezierCurve = () => {
