@@ -33,20 +33,6 @@ $(() => {
         }
     };
 
-    $('#canvas').click(event => {
-        /*
-        const posX = $("#canvas").position().left;
-        const posY = $("#canvas").position().top;
-        const x = event.pageX - posX;
-        const y = event.pageY - posY;
-        */
-        // addColor("#5599ff");
-        // detectEdges();
-        // StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, 5);
-        // averageFilter();
-        sharpenFilter();
-    });
-
     $("#button-add").click(() => {
         const rgbColor = $("#rgb-color").val();
         const hexColorRegex = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
