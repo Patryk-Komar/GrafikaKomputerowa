@@ -39,7 +39,7 @@ $(() => {
     });
 
     $("#binarization-otsu-method").click(() => {
-        OtsuMethod(120);
+        OtsuMethod();
     });
 
     const updateExtensionLUT = (a, b, LUT) => {
@@ -165,9 +165,8 @@ $(() => {
         }
     };
 
-    const OtsuMethod = (thresholdValue) => {
+    const OtsuMethod = () => {
         const {
-            grayscaleArray,
             grayscalePixels,
             grayscaleProbability
         } = createGrayscaleHistogram();
@@ -177,7 +176,7 @@ $(() => {
 
         for (let k = 0; k < 256; k++) {
 
-            thresholdValue = k;
+            const thresholdValue = k;
 
             let objectMean = 0;
             let backgroundMean = 0;
