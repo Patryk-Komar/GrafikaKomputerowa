@@ -38,6 +38,10 @@ $(() => {
         entropySelection(entropyThreshold);
     });
 
+    $("#binarization-otsu-method").click(() => {
+        OtsuMethod(120);
+    });
+
     const updateExtensionLUT = (a, b, LUT) => {
         for (let i = 0; i < 256; i++) {
             if ((a * (i + b)) > 255) {
@@ -148,6 +152,87 @@ $(() => {
                 }
                 entropy *= -1;
                 if (entropy <= thresholdValue) {
+                    pixel.data[0] = 0;
+                    pixel.data[1] = 0;
+                    pixel.data[2] = 0;
+                } else {
+                    pixel.data[0] = 255;
+                    pixel.data[1] = 255;
+                    pixel.data[2] = 255;
+                }
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const OtsuMethod = (thresholdValue) => {
+        const {
+            grayscaleArray,
+            grayscalePixels,
+            grayscaleProbability
+        } = createGrayscaleHistogram();
+
+        let max = 0;
+        let t = 0;
+
+        for (let k = 0; k < 256; k++) {
+
+            thresholdValue = k;
+
+            let objectMean = 0;
+            let backgroundMean = 0;
+    
+            let objectProbability = 0;
+            let backgroundProbability = 0;
+    
+            for (let i = 0; i <= thresholdValue; i++) {
+                objectProbability += grayscaleProbability[i];
+            }
+            for (let i = thresholdValue + 1; i < 256; i++) {
+                backgroundProbability += grayscaleProbability[i];
+            }
+    
+            for (let i = 0; i <= thresholdValue; i++) {
+                objectMean += i * grayscaleProbability[i] / objectProbability;
+            }
+            for (let i = thresholdValue + 1; i < 256; i++) {
+                backgroundMean += i * grayscaleProbability[i] / backgroundProbability;
+            }
+
+            let objectVariation = 0;
+            let backgroundVariation = 0;
+    
+            for (let i = 0; i <= thresholdValue; i++) {
+                objectVariation += Math.pow(i - objectMean, 2) * (grayscaleProbability[i] / objectProbability);
+            }
+            for (let i = thresholdValue + 1; i < 256; i++) {
+                backgroundVariation += Math.pow(i - backgroundMean, 2) * (grayscaleProbability[i] / backgroundProbability);
+            }
+    
+            let globalMean = 0;
+            let globalVariation = 0;
+    
+            for (let i = 0; i < 256; i++) {
+                globalMean += i * grayscaleProbability[i];
+            }
+    
+            for (let i = 0; i < 256; i++) {
+                globalVariation += Math.pow(i - globalMean, 2) * grayscaleProbability[i];
+            }
+
+            const variation = objectProbability * backgroundProbability * Math.pow((objectMean * backgroundMean), 2);
+            console.log(variation);
+
+            if (variation > max) {
+                max = variation;
+                t = k;
+            }
+        }
+
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                if (grayscalePixels[i][j] <= t) {
                     pixel.data[0] = 0;
                     pixel.data[1] = 0;
                     pixel.data[2] = 0;
