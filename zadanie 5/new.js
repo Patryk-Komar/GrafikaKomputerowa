@@ -42,6 +42,14 @@ $(() => {
         OtsuMethod();
     });
 
+    $("#binarization-niblack-method").click(() => {
+        NiblackMethod();
+    });
+
+    $("#adaptive-threshold").click(() => {
+        adaptiveThreshold();
+    });
+
     const updateExtensionLUT = (a, b, LUT) => {
         for (let i = 0; i < 256; i++) {
             if ((a * (i + b)) > 255) {
@@ -239,6 +247,85 @@ $(() => {
                     pixel.data[0] = 255;
                     pixel.data[1] = 255;
                     pixel.data[2] = 255;
+                }
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const adaptiveThreshold = () => {
+        const { grayscalePixels } = createGrayscaleHistogram();
+        const filteredImage = [];
+
+        for (let i = 0; i < canvas.width; i++) {
+            filteredImage[i] = [].fill(false);
+            for (let j = 0; j < canvas.height; j++) {
+                if (i > 0 && j > 0 && i < canvas.width - 1 && j < canvas.height - 1) {
+                    const average = (grayscalePixels[i-1][j-1] + grayscalePixels[i-1][j] + grayscalePixels[i-1][j+1] + grayscalePixels[i][j-1] + grayscalePixels[i][j] + grayscalePixels[i][j+1] + grayscalePixels[i+1][j-1] + grayscalePixels[i+1][j] + grayscalePixels[i+1][j+1]) / 9;
+                    if (grayscalePixels[i][j] > average + 5) {
+                        filteredImage[i][j] = true;
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                if (filteredImage[i][j]) {
+                    pixel.data[0] = 255;
+                    pixel.data[1] = 255;
+                    pixel.data[2] = 255;
+                } else {
+                    pixel.data[0] = 0;
+                    pixel.data[1] = 0;
+                    pixel.data[2] = 0;
+                }
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const NiblackMethod = () => {
+        const { grayscalePixels } = createGrayscaleHistogram();
+        const filteredImage = [];
+
+        for (let i = 0; i < canvas.width; i++) {
+            filteredImage[i] = [].fill(false);
+            for (let j = 0; j < canvas.height; j++) {
+                if (i > 0 && j > 0 && i < canvas.width - 1 && j < canvas.height - 1) {
+                    const average = (grayscalePixels[i-1][j-1] + grayscalePixels[i-1][j] + grayscalePixels[i-1][j+1] + grayscalePixels[i][j-1] + grayscalePixels[i][j] + grayscalePixels[i][j+1] + grayscalePixels[i+1][j-1] + grayscalePixels[i+1][j] + grayscalePixels[i+1][j+1]) / 9;
+                    const standardDeviation = Math.sqrt((
+                        Math.pow(average - grayscalePixels[i-1][j-1], 2) +
+                        Math.pow(average - grayscalePixels[i-1][j], 2) +
+                        Math.pow(average - grayscalePixels[i-1][j+1], 2) +
+                        Math.pow(average - grayscalePixels[i][j-1], 2) +
+                        Math.pow(average - grayscalePixels[i][j], 2) +
+                        Math.pow(average - grayscalePixels[i][j+1], 2) +
+                        Math.pow(average - grayscalePixels[i+1][j-1], 2) +
+                        Math.pow(average - grayscalePixels[i+1][j], 2) +
+                        Math.pow(average - grayscalePixels[i+1][j+1], 2)) / 9
+                    );
+                    const threshold = average + standardDeviation * 0.2;
+                    if (grayscalePixels[i][j] > threshold) {
+                        filteredImage[i][j] = true;
+                    }
+                }
+            }
+        }
+
+
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                if (filteredImage[i][j]) {
+                    pixel.data[0] = 255;
+                    pixel.data[1] = 255;
+                    pixel.data[2] = 255;
+                } else {
+                    pixel.data[0] = 0;
+                    pixel.data[1] = 0;
+                    pixel.data[2] = 0;
                 }
                 context.putImageData(pixel, i, j);
             }
