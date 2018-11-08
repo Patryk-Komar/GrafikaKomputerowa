@@ -45,15 +45,27 @@ $(() => {
         applyMaximumFilter();
     });
 
+    $("#gradient-directional-filter").click(() => {
+        applyGradientDirectionalFilter();
+    });
+
+    $("#prewitt-horizontal-filter").click(() => {
+        applyPrewittHorizontalFilter();
+    });
+
+    $("#gamma-correction-filter").click(() => {
+        applyGammaCorrectionFilter();
+    });
+
     $("#reset").click(() => {
         handleFile(loadedFile);
     });
 
     const applyLaplaceFilter = () => {
         const newImage = [];
-        for (let i = 1; i < canvas.width - 1; i++) {
+        for (let i = 0; i < canvas.width; i++) {
             newImage[i] = [];
-            for (let j = 1; j < canvas.height - 1; j++) {
+            for (let j = 0; j < canvas.height; j++) {
                 const R = Math.round((
                     -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] +
                     -1 * context.getImageData(i - 1, j, 1, 1).data[0] +
@@ -63,7 +75,7 @@ $(() => {
                     -1 * context.getImageData(i, j + 1, 1, 1).data[0] +
                     -1 * context.getImageData(i + 1, j - 1, 1, 1).data[0] +
                     -1 * context.getImageData(i + 1, j, 1, 1).data[0] +
-                    -1 * context.getImageData(i + 1, j + 1, 1, 1).data[0]) / 9);
+                    -1 * context.getImageData(i + 1, j + 1, 1, 1).data[0]));
                 const G = Math.round((
                     -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] +
                     -1 * context.getImageData(i - 1, j, 1, 1).data[1] +
@@ -73,7 +85,7 @@ $(() => {
                     -1 * context.getImageData(i, j + 1, 1, 1).data[1] +
                     -1 * context.getImageData(i + 1, j - 1, 1, 1).data[1] +
                     -1 * context.getImageData(i + 1, j, 1, 1).data[1] +
-                    -1 * context.getImageData(i + 1, j + 1, 1, 1).data[1]) / 9);
+                    -1 * context.getImageData(i + 1, j + 1, 1, 1).data[1]));
                 const B = Math.round((
                     -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] +
                     -1 * context.getImageData(i - 1, j, 1, 1).data[2] +
@@ -83,12 +95,12 @@ $(() => {
                     -1 * context.getImageData(i, j + 1, 1, 1).data[2] +
                     -1 * context.getImageData(i + 1, j - 1, 1, 1).data[2] +
                     -1 * context.getImageData(i + 1, j, 1, 1).data[2] +
-                    -1 * context.getImageData(i + 1, j + 1, 1, 1).data[2]) / 9);
+                    -1 * context.getImageData(i + 1, j + 1, 1, 1).data[2]));
                 newImage[i][j] = { R, G, B };
             }
         }
-        for (let i = 1; i < canvas.width - 1; i++) {
-            for (let j = 1; j < canvas.height - 1; j++) {
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
                 const pixel = context.getImageData(i, j, 1, 1);
                 pixel.data[0] = newImage[i][j].R;
                 pixel.data[1] = newImage[i][j].G;
@@ -191,6 +203,112 @@ $(() => {
                 pixel.data[0] = newImage[i][j].R;
                 pixel.data[1] = newImage[i][j].G;
                 pixel.data[2] = newImage[i][j].B;
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const applyGradientDirectionalFilter = () => {
+        const newImage = [];
+        for (let i = 0; i < canvas.width; i++) {
+            newImage[i] = [];
+            for (let j = 0; j < canvas.height; j++) {
+                const R = Math.round((
+                    -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] +
+                    context.getImageData(i - 1, j, 1, 1).data[0] +
+                    context.getImageData(i - 1, j + 1, 1, 1).data[0] -
+                    context.getImageData(i, j - 1, 1, 1).data[0] -
+                    2 * context.getImageData(i, j, 1, 1).data[0] +
+                    context.getImageData(i, j + 1, 1, 1).data[0] -
+                    context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                    context.getImageData(i + 1, j, 1, 1).data[0] +
+                    context.getImageData(i + 1, j + 1, 1, 1).data[0]));
+                const G = Math.round((
+                    -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] +
+                    context.getImageData(i - 1, j, 1, 1).data[1] +
+                    context.getImageData(i - 1, j + 1, 1, 1).data[1] -
+                    context.getImageData(i, j - 1, 1, 1).data[1] -
+                    2 * context.getImageData(i, j, 1, 1).data[1] +
+                    context.getImageData(i, j + 1, 1, 1).data[1] -
+                    context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                    context.getImageData(i + 1, j, 1, 1).data[1] +
+                    context.getImageData(i + 1, j + 1, 1, 1).data[1])); 
+                const B = Math.round((
+                    -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] +
+                    context.getImageData(i - 1, j, 1, 1).data[2] +
+                    context.getImageData(i - 1, j + 1, 1, 1).data[2] -
+                    context.getImageData(i, j - 1, 1, 1).data[2] -
+                    2 * context.getImageData(i, j, 1, 1).data[2] +
+                    context.getImageData(i, j + 1, 1, 1).data[2] -
+                    context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                    context.getImageData(i + 1, j, 1, 1).data[2] +
+                    context.getImageData(i + 1, j + 1, 1, 1).data[2]));
+                newImage[i][j] = { R, G, B };
+            }
+        }
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                pixel.data[0] = newImage[i][j].R;
+                pixel.data[1] = newImage[i][j].G;
+                pixel.data[2] = newImage[i][j].B;
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const applyPrewittHorizontalFilter = () => {
+        const newImage = [];
+        for (let i = 0; i < canvas.width; i++) {
+            newImage[i] = [];
+            for (let j = 0; j < canvas.height; j++) {
+                const R = Math.round((
+                    -1 * context.getImageData(i - 1, j - 1, 1, 1).data[0] -
+                    context.getImageData(i - 1, j, 1, 1).data[0] -
+                    context.getImageData(i - 1, j + 1, 1, 1).data[0] +
+                    context.getImageData(i + 1, j - 1, 1, 1).data[0] +
+                    context.getImageData(i + 1, j, 1, 1).data[0] +
+                    context.getImageData(i + 1, j + 1, 1, 1).data[0]));
+                const G = Math.round((
+                    -1 * context.getImageData(i - 1, j - 1, 1, 1).data[1] -
+                    context.getImageData(i - 1, j, 1, 1).data[1] -
+                    context.getImageData(i - 1, j + 1, 1, 1).data[1] +
+                    context.getImageData(i + 1, j - 1, 1, 1).data[1] +
+                    context.getImageData(i + 1, j, 1, 1).data[1] +
+                    context.getImageData(i + 1, j + 1, 1, 1).data[1]));
+                const B = Math.round((
+                    -1 * context.getImageData(i - 1, j - 1, 1, 1).data[2] -
+                    context.getImageData(i - 1, j, 1, 1).data[2] -
+                    context.getImageData(i - 1, j + 1, 1, 1).data[2] +
+                    context.getImageData(i + 1, j - 1, 1, 1).data[2] +
+                    context.getImageData(i + 1, j, 1, 1).data[2] +
+                    context.getImageData(i + 1, j + 1, 1, 1).data[2]));
+                newImage[i][j] = { R, G, B };
+            }
+        }
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                pixel.data[0] = newImage[i][j].R;
+                pixel.data[1] = newImage[i][j].G;
+                pixel.data[2] = newImage[i][j].B;
+                context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const applyGammaCorrectionFilter = () => {
+        const gamma = $("#gamma").val();
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                let [ R, G, B ] = pixel.data;
+                R = 255 * Math.pow(R / 255, 1 / gamma);
+                G = 255 * Math.pow(G / 255, 1 / gamma);
+                B = 255 * Math.pow(B / 255, 1 / gamma);
+                pixel.data[0] = R;
+                pixel.data[1] = G;
+                pixel.data[2] = B;
                 context.putImageData(pixel, i, j);
             }
         }
