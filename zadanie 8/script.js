@@ -208,19 +208,23 @@ $(() => {
         }
     };
 
-    const hitOrMissPattern = [[0, 1, 0], [1, 1, -1], [0, -1, -1]];
+    const hitOrMissPatterns = [[[0, 1, 0], [-1, 1, 1], [-1, -1, 0]], [[-1, -1, 0], [-1, 1, 1], [0, 1, 0]], [[0, -1, -1], [1, 1, -1], [0, 1, 0]], [[0, 1, 0], [1, 1, -1], [0, -1, -1]]];
 
     const checkHitOrMissPattern = (x, y) => {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                const [ R, G, B ] = context.getImageData(x + i - 1, y + j - 1, 1, 1).data;
-                if (hitOrMissPattern[i][j] === 1) {
-                    if (R !== 0 || G !== 0 || B !== 0) {
-                        return false;
-                    }
-                } else if (hitOrMissPattern[i][j] === -1) {
-                    if (R !== 255 || G !== 255 || B !== 255) {
-                        return false;
+                for (let hitOrMissPattern of hitOrMissPatterns) {
+                    const [ R, G, B ] = context.getImageData(x + i - 1, y + j - 1, 1, 1).data;
+                    if (hitOrMissPattern[i][j] === 1) {
+                        if (R !== 0 || G !== 0 || B !== 0) {
+                            console.log("hehe");
+                            return false;
+                        }
+                    } else if (hitOrMissPattern[i][j] === -1) {
+                        if (R !== 255 || G !== 255 || B !== 255) {
+                            console.log("hehe");
+                            return false;
+                        }
                     }
                 }
             }
