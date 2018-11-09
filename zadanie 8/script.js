@@ -49,6 +49,10 @@ $(() => {
         applyMorphologicalClosing();
     });
 
+    $("#hit-or-miss").click(() => {
+        applyHitOrMiss();
+    });
+
     $("#reset").click(() => {
         handleFile(loadedFile);
     });
@@ -200,6 +204,50 @@ $(() => {
                     pixel.data[2] = 0;
                 }
                 context.putImageData(pixel, i, j);
+            }
+        }
+    };
+
+    const hitOrMissPattern = [[0, 1, 0], [1, 1, -1], [0, -1, -1]];
+
+    const checkHitOrMissPattern = (x, y) => {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const [ R, G, B ] = context.getImageData(x + i - 1, y + j - 1, 1, 1).data;
+                if (hitOrMissPattern[i][j] === 1) {
+                    if (R !== 0 || G !== 0 || B !== 0) {
+                        return false;
+                    }
+                } else if (hitOrMissPattern[i][j] === -1) {
+                    if (R !== 255 || G !== 255 || B !== 255) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    };
+
+    const applyHitOrMiss = () => {
+        const edges = [];
+        for (let i = 0; i < canvas.width; i++) {
+            edges[i] = [];
+            for (let j = 0; j < canvas.height; j++) {
+                edges[i][j] = checkHitOrMissPattern(i, j);
+            }
+        }
+        for (let i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const pixel = context.getImageData(i, j, 1, 1);
+                const [ R, G, B ] = pixel.data;
+                if (R === 0 && G === 0 && B === 0) {
+                    if (edges[i][j]) {
+                        pixel.data[0] = 255;
+                        pixel.data[1] = 255;
+                        pixel.data[2] = 255;
+                        context.putImageData(pixel, i, j);
+                    }
+                }
             }
         }
     };
