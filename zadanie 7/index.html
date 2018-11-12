@@ -8,41 +8,49 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>Grafika komputerowa - Zadanie 1</header>
+    <header>Grafika komputerowa - Zadanie 7</header>
     <div class="container">
         <div class="tools">
-            <span class="tool drawing active clickable" onclick="changeActiveTool('drawing')" title="Drawing">D</span>
-            <span class="tool moving inactive clickable" onclick="changeActiveTool('moving')" title="Moving">M</span>
-            <span class="tool resizing inactive clickable" onclick="changeActiveTool('resizing')" title="Resizing">R</span>
-            <span class="tool changing inactive clickable" onclick="changeActiveTool('changing')" title="Changing by textboxes">C</span><br>
-            <span class="figure line active clickable" onclick="changeActiveFigure('line')" title="Line">L</span>
-            <span class="figure rectangle inactive clickable" onclick="changeActiveFigure('rectangle')" title="Rectangle">R</span>
-            <span class="figure circle inactive clickable" onclick="changeActiveFigure('circle')" title="Circle">C</span><br>
-            <input type="number" id="line-from-x">
-            <input type="number" id="line-from-y">
-            <input type="number" id="line-to-x">
-            <input type="number" id="line-to-y"><br>
-            <button class="line clickable">
-                Draw line
-            </button><br>
-            <input type="number" id="rectangle-x">
-            <input type="number" id="rectangle-y">
-            <input type="number" id="rectangle-width">
-            <input type="number" id="rectangle-height"><br>
-            <button class="rectangle clickable">
-                Draw rectangle
-            </button><br>
-            <input type="number" id="circle-x">
-            <input type="number" id="circle-y">
-            <input type="number" id="circle-radius"><br>
-            <button class="circle clickable">
-                Draw circle
-            </button><br>
-            <button class="clear clickable">
-                Clear canvas
-            </button><br>
+            <div>
+                Ax: <input type="number" id="line-x1" min="0" max="800" value="100">
+                Ay: <input type="number" id="line-y1" min="0" max="800" value="100">
+                Bx: <input type="number" id="line-x2" min="0" max="800" value="100">
+                By: <input type="number" id="line-y2" min="0" max="800" value="100">
+                <button class="clickable" id="draw-line" title="Draw line">DL</button>
+            </div>
+            <div>
+                Ax: <input type="number" id="rectangle-x1" min="0" max="800" value="100">
+                Ay: <input type="number" id="rectangle-y1" min="0" max="800" value="100">
+                Bx: <input type="number" id="rectangle-x2" min="0" max="800" value="100">
+                By: <input type="number" id="rectangle-y2" min="0" max="800" value="100">
+                <button class="clickable" id="draw-rectangle" title="Draw rectangle">DR</button>
+            </div>
+            <div>
+                Ox: <input type="number" id="circle-ox" min="0" max="800" value="200">
+                Oy: <input type="number" id="circle-oy" min="0" max="800" value="200">
+                R: <input type="number" id="circle-r" min="0" max="200" value="100">
+                <button class="clickable" id="draw-circle" title="Draw circle">DC</button>
+            </div>
+            <div>
+                <span class="tool active clickable" id="drawing-line" title="Drawing line">DL</span>
+                <span class="tool inactive clickable" id="drawing-rectangle" title="Drawing rectangle">DR</span>
+                <span class="tool inactive clickable" id="drawing-circle" title="Drawing circle">DC</span>
+            </div>
+            <div>
+                <span class="tool inactive clickable" id="selecting-figure" title="Selecting figure">SF</span>
+                <span class="tool inactive clickable" id="selecting-point" title="Selecting point">SP</span>
+            </div>
+            <div>
+                <button class="clickable" id="save">Save</button>
+                <button class="clickable" id="load">Load</button>
+            </div>
+            <div>
+                <button class="clickable" id="reset">
+                    Reset
+                </button>
+            </div>
         </div>
-        <canvas id="canvas" width="800" height="450"></canvas>
+        <canvas id="canvas" width="800" height="600"></canvas>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="script.js"></script>
