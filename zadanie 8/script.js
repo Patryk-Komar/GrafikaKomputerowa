@@ -250,7 +250,6 @@ $(() => {
                 const [ R, G, B ] = pixel.data;
                 if (R === 255 && G === 255 && B === 255) {
                     if (edges[i][j]) {
-                        console.log("hehehe");
                         pixel.data[0] = 0;
                         pixel.data[1] = 0;
                         pixel.data[2] = 0;
