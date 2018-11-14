@@ -211,25 +211,29 @@ $(() => {
     const hitOrMissPatterns = [[[0, 1, 0], [-1, 1, 1], [-1, -1, 0]], [[-1, -1, 0], [-1, 1, 1], [0, 1, 0]], [[0, -1, -1], [1, 1, -1], [0, 1, 0]], [[0, 1, 0], [1, 1, -1], [0, -1, -1]]];
 
     const checkHitOrMissPattern = (x, y) => {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                for (let hitOrMissPattern of hitOrMissPatterns) {
+        let fits;
+        for (let k = 0; k < 4; k++) {
+            const hitOrMissPattern = hitOrMissPatterns[k];
+            fits = true;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
                     const [ R, G, B ] = context.getImageData(x + i - 1, y + j - 1, 1, 1).data;
                     if (hitOrMissPattern[i][j] === 1) {
-                        if (R !== 0 || G !== 0 || B !== 0) {
-                            console.log("hehe");
-                            return false;
+                        if (R !== 255 || G !== 255 || B !== 255) {
+                            fits = false;
                         }
                     } else if (hitOrMissPattern[i][j] === -1) {
-                        if (R !== 255 || G !== 255 || B !== 255) {
-                            console.log("hehe");
-                            return false;
+                        if (R !== 0 || G !== 0 || B !== 0) {
+                            fits = false;
                         }
                     }
                 }
             }
+            if (fits) {
+                return true;
+            }
         }
-        return true;
+        return false;
     };
 
     const applyHitOrMiss = () => {
@@ -244,11 +248,12 @@ $(() => {
             for (let j = 0; j < canvas.height; j++) {
                 const pixel = context.getImageData(i, j, 1, 1);
                 const [ R, G, B ] = pixel.data;
-                if (R === 0 && G === 0 && B === 0) {
+                if (R === 255 && G === 255 && B === 255) {
                     if (edges[i][j]) {
-                        pixel.data[0] = 255;
-                        pixel.data[1] = 255;
-                        pixel.data[2] = 255;
+                        console.log("hehehe");
+                        pixel.data[0] = 0;
+                        pixel.data[1] = 0;
+                        pixel.data[2] = 0;
                         context.putImageData(pixel, i, j);
                     }
                 }
